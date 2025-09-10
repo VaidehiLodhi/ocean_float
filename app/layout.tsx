@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
+import { Toaster } from "sonner";
+import {ThemeProvider} from "next-themes"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,9 +52,17 @@ export default function RootLayout({
 }>) {
   return (
     <TRPCReactProvider>
-      <html lang="en" className={shinkaFont.className}>
+      <html lang="en" className={shinkaFont.className} suppressHydrationWarning>
         <body>
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster/>
+              {children}
+          </ThemeProvider>
         </body>
       </html>
     </TRPCReactProvider>
