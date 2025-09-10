@@ -1,22 +1,27 @@
 "use client"
 
-import Image from "next/image";
 import { shinkaBoldFont } from "./layout";
 import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
-import {Toaster, toast} from "sonner";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {toast} from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
 
   const [value, setValue] = useState("");
 
   const trpc = useTRPC();
-  const createMessage = useMutation(trpc.messages.create.mutationOptions({
-    onSuccess: () => {
-      toast.success("Message created")
+  const {data : messages} = useQuery(trpc.messages.getMany.queryOptions());
+  const createProject = useMutation(trpc.projects.create.mutationOptions({
+    onError: (error) => {
+      toast.error(error.message)
+    },
+    onSuccess: (data) => {
+      router.push(`/projects/${data.id}`);
     }
   }))
 
@@ -51,8 +56,8 @@ export default function Home() {
 
       <div className="p-4 max-w-7xl mx-auto">
         <Input value={value} onChange={(e) => setValue(e.target.value)}/>
-        <Button disabled={createMessage.isPending} onClick={()=>createMessage.mutate({value: value})}>
-          Send Message
+        <Button disabled={createProject.isPending || value.trim().length === 0} onClick={()=>createProject.mutate({value: value.trim()})}>
+          Submit
         </Button>
       </div>
     </div>
