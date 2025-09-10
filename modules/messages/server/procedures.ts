@@ -43,13 +43,15 @@ export const messagesRouter = createTRPCRouter({
                 }
             })
 
-            // await inngest.send({
-            //     name: "test/hello.world",
-            //     data: {
-            //         value: input.value,
-            //         projectId: input.projectId,
-            //     }
-            // })
+            // Trigger Langflow RAG processing
+            await inngest.send({
+                name: "chat/message.process",
+                data: {
+                    messageId: createdMessage.id,
+                    projectId: input.projectId,
+                    userMessage: input.value,
+                }
+            });
 
             return createdMessage;
         })

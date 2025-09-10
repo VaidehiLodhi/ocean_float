@@ -16,44 +16,54 @@ export const processChatMessage = inngest.createFunction(
   async ({ event, step }) => {
     const { messageId, projectId, userMessage } = event.data;
 
-    // Call ChatGPT API
-    const chatGptResponse = await step.run("call-chatgpt", async () => {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Call your Langflow RAG model http://localhost:7860/api/v1/run/0ea05cb7-e310-4a25-a2e5-4c65f1ff35f4
+    const ragResponse = await step.run("call-langflow-rag", async () => {
+      const response = await fetch(`${process.env.LANGFLOW_API_URL}/api/v1/run/0ea05cb7-e310-4a25-a2e5-4c65f1ff35f4`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "system",
-              content: "You are a helpful assistant for ocean exploration and marine research. Provide informative and engaging responses about marine life, oceanography, and underwater exploration."
-            },
-            {
-              role: "user",
-              content: userMessage
-            }
-          ],
-          max_tokens: 1000,
-          temperature: 0.7,
+          input_value: userMessage,
+          output_type: "chat",
+          input_type: "chat",
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`ChatGPT API error: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`Langflow API error: ${response.status} - ${errorText}`);
+        throw new Error(`Langflow API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      return data.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+      console.log("Langflow response:", data);
+
+      // Extract the response from the complex Langflow structure
+      try {
+        const responseText = data.outputs?.[0]?.outputs?.[0]?.text ||
+          data.outputs?.[0]?.outputs?.[0]?.results?.message?.text ||
+          data.output ||
+          data.result ||
+          data.data;
+
+        if (responseText) {
+          return responseText;
+        } else {
+          console.error("Could not extract response from Langflow data:", data);
+          return "Sorry, I couldn't generate a response.";
+        }
+      } catch (error) {
+        console.error("Error parsing Langflow response:", error);
+        return "Sorry, I couldn't generate a response.";
+      }
     });
 
     // Save the assistant's response to the database
     await step.run("save-assistant-message", async () => {
       await prisma.message.create({
         data: {
-          content: chatGptResponse,
+          content: ragResponse,
           role: "ASSISTANT",
           type: "RESULT",
           projectId: projectId,
@@ -64,7 +74,7 @@ export const processChatMessage = inngest.createFunction(
     return {
       messageId,
       projectId,
-      assistantResponse: chatGptResponse
+      assistantResponse: ragResponse
     };
   },
 );
