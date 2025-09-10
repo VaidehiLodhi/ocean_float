@@ -63,7 +63,7 @@ export default function SignIn() {
             variant="secondary"
             size="lg"
             className="w-full"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/homepage" })}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -89,7 +89,7 @@ export default function SignIn() {
             variant="secondary"
             size="lg"
             className="w-full"
-            onClick={() => signIn("github")}
+            onClick={() => signIn("github", { callbackUrl: "/homepage" })}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path

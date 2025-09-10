@@ -1,5 +1,3 @@
-"use client";
-
 import Homepage from "@/components/Homepage";
 
 import { redirect, useRouter } from "next/navigation";
@@ -10,8 +8,8 @@ export default async function Home() {
   const session = await auth();
 
   if (!session) {
-    redirect("/api/auth/sign-in");
+    redirect("/sign-in");
   }
 
-  return <Homepage />;
+  redirect("/homepage");
 }
