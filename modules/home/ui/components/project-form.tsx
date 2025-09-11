@@ -10,10 +10,9 @@ import { ArrowUpIcon, Loader2Icon } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface Props {
-  projectId: string;
-}
+
 
 const formSchema = z.object({
     value: z.string()
@@ -21,9 +20,8 @@ const formSchema = z.object({
             .max(10000, {message: "Message is too long"}),
 })
 
-export const MessageForm = ({ projectId }: Props) => {
-
-    
+export const ProjectForm = () => {
+    const router = useRouter();
     const trpc = useTRPC();
     const queryClient = useQueryClient()
     const form = useForm<z.infer<typeof formSchema>>({
@@ -33,12 +31,12 @@ export const MessageForm = ({ projectId }: Props) => {
         },
     });
     
-    const createMessage = useMutation(trpc.messages.create.mutationOptions({
+    const createProject= useMutation(trpc.projects.create.mutationOptions({
         onSuccess: (data) => {
-            form.reset();
             queryClient.invalidateQueries(
-                trpc.messages.getMany.queryOptions({projectId}),
+                trpc.projects.getMany.queryOptions(),
             );
+            router.push(`/projects/${data.id}`);
             //TODO: Invalidate usage status
         },
         onError: (error) => {
@@ -47,15 +45,13 @@ export const MessageForm = ({ projectId }: Props) => {
     }))
     
     const onSubmit = async(values: z.infer<typeof formSchema>) => {
-        await createMessage.mutateAsync({
+        await createProject.mutateAsync({
             value: values.value,
-            projectId,
         })
     }
     
     const [isFocused, setIsFocused] = useState(false)
-    const showUsage = false;
-    const isPending = createMessage.isPending;
+    const isPending = createProject.isPending;
     const isButtonDisabled = isPending || !form.formState.isValid;
 
     return (
@@ -65,7 +61,6 @@ export const MessageForm = ({ projectId }: Props) => {
           className={cn(
             "relative border p-4 pt-1 bg-[#393939] rounded-xl text-[#EBEBEB] dark:bg-sidebar transition-all",
             isFocused && "shadow-xs",
-            showUsage && "rounded-t-none"
           )}
         >
           <FormField

@@ -16,9 +16,9 @@ export const processChatMessage = inngest.createFunction(
   async ({ event, step }) => {
     const { messageId, projectId, userMessage } = event.data;
 
-    // Call your Langflow RAG model http://localhost:7860/api/v1/run/0ea05cb7-e310-4a25-a2e5-4c65f1ff35f4
+    // Call your Langflow RAG model http://localhost:7860/api/v1/run/dfb9e75e-1341-407e-9d58-7bf81ed5f861
     const ragResponse = await step.run("call-langflow-rag", async () => {
-      const response = await fetch(`${process.env.LANGFLOW_API_URL}/api/v1/run/0ea05cb7-e310-4a25-a2e5-4c65f1ff35f4`, {
+      const response = await fetch(`${process.env.LANGFLOW_API_URL}/api/v1/run/dfb9e75e-1341-407e-9d58-7bf81ed5f861`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

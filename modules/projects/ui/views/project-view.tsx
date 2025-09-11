@@ -9,6 +9,9 @@ import { MessagesContainer } from "../components/messages-container";
 import { Suspense, useState } from "react";
 import { Fragment } from "@/lib/generated/prisma";
 import { ProjectHeader } from "../components/project-header";
+import { CesiumWrapper } from "@/app/dashboard/components/CesiumWrapper";
+import type { Position } from "@/app/dashboard/types/position";
+import { oceanPoints } from "@/app/dashboard/data/ocean-points";
 
 interface Props {
     projectId:  string;
@@ -16,34 +19,34 @@ interface Props {
 
 export const ProjectView =({projectId} : Props)=> {
     const [activateFragment, setActivateFragment] = useState<Fragment | null>(null);
+    
+    // Ocean points across Indian and Pacific Ocean
+    const positions = oceanPoints;
 
     return (
-        <div className="h-screen">
-            <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel
-                    defaultSize={35}
-                    minSize={20}
-                    className="flex flex-col min-h-0"
-                >
-                    <Suspense fallback={<p>Loading project</p>}>
-                        <ProjectHeader projectId={projectId}/>
-                    </Suspense>
-                    <Suspense fallback={<p>Loading....</p>}>
-                        <MessagesContainer 
-                            projectId={projectId}
-                            activateFragment={activateFragment}
-                            setActivateFragment={setActivateFragment}
-                        />
-                    </Suspense>
-                </ResizablePanel>
-                <ResizableHandle className="hover:bg-primary transition-colors"/>
-                <ResizablePanel
-                    defaultSize={65}
-                    minSize={50}
-                >
-                    TODO: Preview
-                </ResizablePanel>
-            </ResizablePanelGroup>
-        </div>
-    )
+      <div className="h-screen bg-[#6c6c6c] font-bold">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel
+            defaultSize={65}
+            minSize={50}
+            className="flex flex-col min-h-0"
+          >
+            <Suspense fallback={<p>Loading project</p>}>
+              <ProjectHeader projectId={projectId} />
+            </Suspense>
+            <Suspense fallback={<p>Loading....</p>}>
+              <MessagesContainer
+                projectId={projectId}
+                activateFragment={activateFragment}
+                setActivateFragment={setActivateFragment}
+              />
+            </Suspense>
+          </ResizablePanel>
+          <ResizableHandle className="hover:bg-primary transition-colors" />
+          <ResizablePanel defaultSize={35} minSize={20}>
+            <CesiumWrapper positions={positions} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    );
 }

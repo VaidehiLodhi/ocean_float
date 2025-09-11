@@ -41,7 +41,7 @@ export const MessageLoading =()=> {
                     height={18}
                     className="shrink-0"
                 /> */}
-                <span className="text-sm font-medium">
+                <span className="text-sm text-[#EBEBEB] font-bold">
                     FloatChat
                 </span>
             </div>

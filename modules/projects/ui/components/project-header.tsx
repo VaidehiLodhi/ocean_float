@@ -20,13 +20,13 @@ export const ProjectHeader =({projectId}: Props)=> {
     const {setTheme, theme} = useTheme();
 
     return (
-      <header className="p-2 flex justify-between items-center border-b">
+      <header className=" font-bold text-[#EBEBEB] p-2 flex justify-between items-center border-b bg-[#393939]">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="sm"
-              className="focus-visible: ring-0 hover:bg-transparent hover:opacity-75 transition-opacity pl-2!"
+              className="focus-visible: ring-0 hover:bg-[#EBEBEB] hover:opacity-75 transition-opacity pl-2!"
             >
               {/* <Image
                             src="/logo.svg"
@@ -34,25 +34,29 @@ export const ProjectHeader =({projectId}: Props)=> {
                             width={18}
                             height={18}
                         /> */}
-              <span className="text-sm font-medium">{project.name}</span>
+              <span className="text-sm font-bold">{project.name}</span>
               <ChevronDownIcon />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="start">
-            <DropdownMenuItem asChild>
+          <DropdownMenuContent
+            side="bottom"
+            align="start"
+            className="bg-[#EBEBEB]"
+          >
+            <DropdownMenuItem className=" hover:bg-[#393939]/10" asChild>
               <Link href="/">
                 <ChevronLeftIcon />
-                <span>Go to Dashboard</span>
+                <span className="font-bold">Go to Dashboard</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="gap-2">
                 <SunMoonIcon className="size-4 text-muted-foreground" />
-                <span>Appearance</span>
+                <span className="font-bold">Appearance</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
-                <DropdownMenuSubContent>
+                <DropdownMenuSubContent className="bg-[#EBEBEB] font-bold">
                   <DropdownMenuRadioGroup
                     value="light"
                     onValueChange={(theme) => {

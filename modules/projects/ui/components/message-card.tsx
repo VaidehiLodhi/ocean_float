@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import {format} from "date-fns"
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Code2, Code2Icon } from "lucide-react";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 
 interface UserMessageProps {
     content: string;
@@ -11,12 +12,12 @@ interface UserMessageProps {
 
 const UserMessage =({content}: UserMessageProps)=> {
     return (
-        <div className="flex justify-end pb-4 pr-2 pl-10">
-            <Card className="rounded-lg bg-muted p-3 shadow-none border-none max-w-[80%] break-words">
-                {content}
-            </Card>
-        </div>
-    )
+      <div className="flex justify-end pb-4 pr-2 pl-10">
+        <Card className="rounded-lg text-[#EBEBEB] p-3 shadow-none border-none max-w-[80%] break-words bg-[#393939]">
+          {content}
+        </Card>
+      </div>
+    );
 }
 
 interface AssistantMessageProps {
@@ -37,22 +38,24 @@ const AssistantMessage =({
     type,
 } : AssistantMessageProps) => {
     return (
-        <div className={cn(
-            "flex flex-col group px-2 pb-4",
-            type === "ERROR" && "text-red-700 dark:text-red-500"
-        )}>
-            <div className="flex items-center gap-2 pl-2 mb-2">
-                {/*TODO: add logo */}
-                <span className="text-sm font-medium">FloatChat</span>
-                <span className="text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                    {format(createdAt, "HH:mm 'on' MMM dd, yyyy" )}
-                </span>
-            </div>
-            <div className="pl-8.5 flex flex-col gap-y-4">
-                <span>{content}</span>
-            </div>
+      <div
+        className={cn(
+          "flex flex-col group px-2 pb-4 rounded-lg",
+          type === "ERROR" && "text-red-700 dark:text-red-500"
+        )}
+      >
+        <div className="flex items-center gap-2 pl-2 mb-2 rounded-lg">
+          {/*TODO: add logo */}
+          <span className="text-sm font-bold text-[#EBEBEB]">FloatChat</span>
+          <span className="text-xs text-black opacity-0 transition-opacity group-hover:opacity-100">
+            {format(createdAt, "HH:mm 'on' MMM dd, yyyy")}
+          </span>
         </div>
-    )
+        <div className="pl-8.5 flex p-4 flex-col text-[#EBEBEB] bg-[#393939] font-bold gap-y-4 rounded-lg">
+          <MarkdownRenderer content={content} />
+        </div>
+      </div>
+    );
 }
 
 interface FragmentCardProps {
